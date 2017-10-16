@@ -1,0 +1,15 @@
+{
+     "listeners": {
+         "*:8100": {
+             "application": "hello_php"
+         }
+     },
+     "applications": {
+         "hello_php": {
+             "type": "php",
+              "workers": 10,
+              "root": "/www/site",
+              "index": "index.php"
+         }
+     }
+}
