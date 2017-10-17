@@ -1,0 +1,25 @@
+app:
+  image: alpine
+  volumes:
+    - ./app:/usr/share/nginx/app
+  tty: true
+
+php:
+  build: ../../php-fpm/
+  ports:
+    - "9000:9000"
+  volumes_from:
+    - app
+  environment:
+    - "TZ=Japan"
+
+nginx:
+  build: ../../php-nginx/
+  ports:
+    - "8000:80"
+  links:
+    - php
+  volumes_from:
+    - app
+  environment:
+    - "TZ=Japan"
