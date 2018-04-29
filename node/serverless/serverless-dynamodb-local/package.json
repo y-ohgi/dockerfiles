@@ -1,0 +1,7 @@
+{
+  "name": "dynamodb-local",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless-dynamodb-local": "^0.2.30"
+  }
+}

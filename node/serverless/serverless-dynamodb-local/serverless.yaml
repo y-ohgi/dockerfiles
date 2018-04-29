@@ -1,0 +1,8 @@
+service: dynamodb-local
+
+provider:
+  name: aws
+
+plugins:
+  - serverless-dynamodb-local
+  # - serverless-offline
