@@ -1,7 +1,7 @@
 FROM python:3-alpine
 
 RUN pip install awscli && \
-    apk add --update curl jq && \
+    apk add --update curl groff less jq && \
     cd /usr/local/bin && \
     curl -LO https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-06-05/bin/linux/amd64/heptio-authenticator-aws && \
     chmod +x ./heptio-authenticator-aws && \
