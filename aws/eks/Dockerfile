@@ -21,6 +21,9 @@ RUN pip install awscli && \
     chmod +x ./kubectl && \
     mkdir -p /root/.kube && { \
       echo 'apiVersion: v1'; \
+      echo 'kind: Config'; \
+      echo 'preferences: {}'; \
+      echo 'current-context: aws'; \
       echo 'clusters:';  \
       echo '- cluster:'; \
       echo '    server: <endpoint-url>'; \
@@ -31,9 +34,6 @@ RUN pip install awscli && \
       echo '    cluster: kubernetes'; \
       echo '    user: aws'; \
       echo '  name: aws'; \
-      echo 'current-context: aws'; \
-      echo 'kind: Config'; \
-      echo 'preferences: {}'; \
       echo 'users:'; \
       echo '- name: aws'; \
       echo '  user:'; \
@@ -46,4 +46,6 @@ RUN pip install awscli && \
       echo '        - "<cluster-name>"'; \
       echo '        # - "-r"'; \
       echo '        # - "<role-arn>"'; \
-    } | tee /root/.kube/config
+    } | tee /root/.kube/config.org
+
+CMD bash

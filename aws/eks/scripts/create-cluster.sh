@@ -85,6 +85,8 @@ EKS_CLUSTER_CREDENTIAL=$(aws eks describe-cluster --name $CLUSTER_NAME --query '
 # Setting kubectl
 printf " ${COLOR_GRAY}Setting kubectl... ${COLOR_OFF}\n"
 
+cp /root/.kube/config.org /root/.kube/config
+
 sed -i -e "s|server: <endpoint-url>|server: $EKS_CLUSTER_ENDPINT_URL|g" /root/.kube/config
 sed -i -e "s|certificate-authority-data: <base64-encoded-ca-cert>|certificate-authority-data: $EKS_CLUSTER_CREDENTIAL|g" /root/.kube/config
 sed -i -e "s|- \"<cluster-name>\"|- \"$CLUSTER_NAME\"|g" /root/.kube/config
@@ -115,7 +117,7 @@ aws cloudformation create-stack \
     ParameterKey=KeyName,ParameterValue=$EKS_NODE_KEYPAIR \
     ParameterKey=NodeImageId,ParameterValue=$EKS_NODE_AMIID
 aws cloudformation wait stack-create-complete --stack-name ${CLUSTER_NAME}-nodegroup
-EKS_NODE_ROLE=$(aws cloudformation describe-stacks --stack-name test-cluster-nodegroup --query 'Stacks[0].Outputs[?OutputKey==`NodeInstanceRole`].OutputValue' --output text)
+EKS_NODE_ROLE=$(aws cloudformation describe-stacks --stack-name ${CLUSTER_NAME}-nodegroup --query 'Stacks[0].Outputs[?OutputKey==`NodeInstanceRole`].OutputValue' --output text)
 
 
 # Enable Worker Nodes
