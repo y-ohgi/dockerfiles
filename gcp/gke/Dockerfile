@@ -22,10 +22,14 @@ RUN set -x \
   && echo '. /etc/bash_completion' >> /root/.bashrc \
   && echo '. <(kubectl completion bash)' >> /root/.bashrc \
   && echo '. /usr/local/bin/kube-ps1.sh' >> /root/.bashrc \
-  && echo 'export PS1="\w \$(cat /root/.config/gcloud/configurations/config_default | grep project | awk '\''{print \$3}'\'')"' >> /root/.bashrc \
-  && echo 'export PS1+=" \$(kube_ps1) \w"' >> /root/.bashrc \
-  && echo 'export PS1+="\n# "' >> /root/.bashrc \
+  && echo 'export PS1=""' >> /root/.bashrc \
+  && echo 'export PS1+="[\$(date +'\''%Y-%m-%dT%H:%M:%S%z'\'')] "'>> /root/.bashrc \
+  && echo 'export PS1+="\e[0;34mgcp:\$(cat /root/.config/gcloud/configurations/config_default | grep project | awk '\''{print \$3}'\'' | grep -e '\''.*'\'' || echo \"\e[0;90m project unselected\")\e[0m "' >> /root/.bashrc \
+  && echo 'export PS1+="\$(kube_ps1) "' >> /root/.bashrc \
+  && echo 'export PS1+="\w "' >> /root/.bashrc \
+  && echo 'export PS1+="\\n# "' >> /root/.bashrc \
   && echo 'export LC_ALL="C.UTF-8"' >> /root/.bashrc \
+  && echo 'alias rm="rm -i"' >> /root/.bashrc \
   && echo 'alias ls="ls --color=auto"' >> /root/.bashrc \
   && echo 'alias ll="ls -lat --color=always"' >> /root/.bashrc \
   && echo 'alias grep="grep --color"' >> /root/.bashrc \
