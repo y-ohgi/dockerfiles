@@ -41,7 +41,7 @@ RUN set -x \
   && echo 'echo "  - $ gcloud auth login"' >> /root/.bashrc \
   && echo 'echo "* set default project"' >> /root/.bashrc \
   && echo 'echo "  - $ gcloud projects list"' >> /root/.bashrc \
-  && echo 'echo "  - $ gcloud config set <PROJECT ID>"' >> /root/.bashrc \
+  && echo 'echo "  - $ gcloud config set project <PROJECT ID>"' >> /root/.bashrc \
   && echo 'echo "* set default region"' >> /root/.bashrc \
   && echo 'echo "  - $ gcloud config set compute/zone asia-northeast1-a"' >> /root/.bashrc \
   && echo 'echo "* list existing clusters"' >> /root/.bashrc \
@@ -60,7 +60,6 @@ RUN set -x \
   && echo 'set fenc=utf-8"' >> ~/.vimrc \
   && echo ':syntax on"' >> ~/.vimrc \
   && : "--- clean cache" \
-  && apt clean \
   && rm -rf /tmp/*
 
 WORKDIR /root
