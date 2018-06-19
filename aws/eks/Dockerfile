@@ -15,7 +15,7 @@ RUN set -x \
   && JQ_VERSION="1.5" \
   && pip install awscli \
   && apt upgrade -y && apt update \
-  && apt install -y curl groff-base less jq git vim \
+  && apt install -y curl bash-completion groff-base less jq git vim \
   && : "--- kubectl" \
   && curl -L -o /usr/local/bin/kubectl https://amazon-eks.s3-us-west-2.amazonaws.com/${KUBECTL_VERSION}/${AWS_KUBECTL_RELEASEDATE}/bin/linux/amd64/kubectl \
   && chmod +x /usr/local/bin/kubectl \
