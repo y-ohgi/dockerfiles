@@ -73,14 +73,14 @@ RUN set -x \
   && echo 'echo Sample Commands.' >> /root/.bashrc \
   && echo 'echo ""' >> /root/.bashrc \
   && echo 'echo "* Create EKS Cluster"' >> /root/.bashrc \
-  && echo 'echo "  - $ /opt/scripts/crete-cluster.sh <CLUSTER_NAME>"' >> /root/.bashrc \
+  && echo 'echo "  - $ /opt/scripts/create-cluster.sh <CLUSTER_NAME>"' >> /root/.bashrc \
   && echo 'echo "* Delete EKS Cluster"' >> /root/.bashrc \
   && echo 'echo "  - $ /opt/scripts/delete-cluster.sh <CLUSTER_NAME>"' >> /root/.bashrc \
   && echo 'echo ""' >> /root/.bashrc \
   && echo 'echo "* list existing clusters"' >> /root/.bashrc \
   && echo 'echo "  - $ aws eks list-clusters"' >> /root/.bashrc \
   && echo 'echo "* If authenticating to an existing cluster"' >> /root/.bashrc \
-  && echo 'echo "  - $ /opt/scripts/crete-context.sh <CLUSTER_NAME>"' >> /root/.bashrc \
+  && echo 'echo "  - $ /opt/scripts/create-context.sh <CLUSTER_NAME>"' >> /root/.bashrc \
   && echo 'echo "* list existing Kubernetes resources"' >> /root/.bashrc \
   && echo 'echo "  - $ kubectl get all"' >> /root/.bashrc \
   && echo 'echo "* rename current context"' >> /root/.bashrc \
