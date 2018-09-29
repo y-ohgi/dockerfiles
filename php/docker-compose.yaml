@@ -5,7 +5,7 @@ app:
   tty: true
 
 php:
-  build: ../../php-fpm/
+  build: php-fpm
   ports:
     - "9000:9000"
   volumes_from:
@@ -14,7 +14,7 @@ php:
     - "TZ=Japan"
 
 nginx:
-  build: ../../php-nginx/
+  build: php-nginx
   ports:
     - "8000:80"
   links:
