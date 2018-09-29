@@ -26,15 +26,30 @@ EKS_CLUSTER_ROLE=""
 EKS_NODE_KEYPAIR=$CLUSTER_NAME
 EKS_NODE_ROLE=""
 
+
+trap "[$(date +'%Y-%m-%dT%H:%M:%S%z')] trapped" 1 2 3 15
+
+
 # Authentication of aws command
 set +e
-aws sts get-caller-identity || aws configure
-set -e
-aws configure set region $AWS_REGION
 
+if ! aws sts get-caller-identity; then
+  mkdir -p /root/.aws
+  cat <<EOL > /root/.aws/config
+[default]
+output = json
+region = us-west-2
+EOL
+  aws configure
+fi
+
+set -e
+
+export AWS_REGION=$(echo "us-west-2
+us-east-1" | fzf --layout=default --height=100%)
 
 # Create Cluster IAM Role
-printf " ${COLOR_GRAY}Start Create Cluster IAM Role... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Start Create Cluster IAM Role... ${COLOR_OFF}\n"
 
 cat <<EOL > /tmp/policy.json
 {
@@ -58,32 +73,40 @@ EKS_CLUSTER_ROLE=$(aws iam get-role --role-name ${CLUSTER_NAME}-role --query 'Ro
 
 
 # Create Cluster VPC
-printf " ${COLOR_GRAY}Start Create VPC Stack... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Start Create VPC Stack... ${COLOR_OFF}\n"
 
-aws cloudformation create-stack --stack-name ${CLUSTER_NAME} --template-url https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-06-05/amazon-eks-vpc-sample.yaml
-aws cloudformation wait stack-create-complete --stack-name $CLUSTER_NAME
-EKS_VPCID=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --query 'Stacks[0].Outputs[?OutputKey==`VpcId`][].OutputValue' --output text)
-EKS_SUBNETS=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --query 'Stacks[0].Outputs[?OutputKey==`SubnetIds`][].OutputValue' --output text)
-EKS_CLUSTER_SG=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --query 'Stacks[0].Outputs[?OutputKey==`SecurityGroups`][].OutputValue' --output text)
+aws cloudformation create-stack --stack-name ${CLUSTER_NAME} --region $AWS_REGION \
+    --template-url https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-06-05/amazon-eks-vpc-sample.yaml
+aws cloudformation wait stack-create-complete --stack-name $CLUSTER_NAME --region $AWS_REGION
+
+EKS_VPCID=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --region $AWS_REGION \
+                --output text \
+                --query 'Stacks[0].Outputs[?OutputKey==`VpcId`][].OutputValue')
+EKS_SUBNETS=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --region $AWS_REGION \
+                  --output text \
+                  --query 'Stacks[0].Outputs[?OutputKey==`SubnetIds`][].OutputValue')
+EKS_CLUSTER_SG=$(aws cloudformation describe-stacks --stack-name $CLUSTER_NAME --region $AWS_REGION \
+                     --output text \
+                     --query 'Stacks[0].Outputs[?OutputKey==`SecurityGroups`][].OutputValue')
 
 
 # Create EKS Cluster
-printf " ${COLOR_GRAY}Start Create EKS Cluster... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Start Create EKS Cluster... ${COLOR_OFF}\n"
 
-aws eks create-cluster --name $CLUSTER_NAME --role-arn ${EKS_CLUSTER_ROLE} --resources-vpc-config subnetIds=${EKS_SUBNETS},securityGroupIds=${EKS_CLUSTER_SG}
+aws eks create-cluster --name $CLUSTER_NAME --role-arn ${EKS_CLUSTER_ROLE} --resources-vpc-config subnetIds=${EKS_SUBNETS},securityGroupIds=${EKS_CLUSTER_SG} --region $AWS_REGION
 
-while [ ! "$(aws eks describe-cluster --name $CLUSTER_NAME --query 'cluster.status' --output text)" = "ACTIVE" ]
+while [ ! "$(aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION --query 'cluster.status' --output text)" = "ACTIVE" ]
 do
   sleep 1
 done
 
-aws eks describe-cluster --name $CLUSTER_NAME
-EKS_CLUSTER_ENDPINT_URL=$(aws eks describe-cluster --name $CLUSTER_NAME --query 'cluster.endpoint' --output text)
-EKS_CLUSTER_CREDENTIAL=$(aws eks describe-cluster --name $CLUSTER_NAME --query 'cluster.certificateAuthority.data' --output text)
+aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION
+EKS_CLUSTER_ENDPINT_URL=$(aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION --query 'cluster.endpoint' --output text)
+EKS_CLUSTER_CREDENTIAL=$(aws eks describe-cluster --name $CLUSTER_NAME --region $AWS_REGION --query 'cluster.certificateAuthority.data' --output text)
 
 
 # Setting kubectl
-printf " ${COLOR_GRAY}Setting kubectl... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Setting kubectl... ${COLOR_OFF}\n"
 
 cp /root/.kube/config.org /root/.kube/config
 
@@ -96,15 +119,15 @@ sed -i -e "s|- \"<cluster-name>\"|- \"$CLUSTER_NAME\"|g" /root/.kube/config
 kubectl get all
 
 # Create Keypair
-printf " ${COLOR_GRAY}Create Worker Node Keypair... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Create Worker Node Keypair... ${COLOR_OFF}\n"
 
-aws ec2 create-key-pair --key-name $EKS_NODE_KEYPAIR --query 'KeyMaterial' --output text > /tmp/$EKS_NODE_KEYPAIR.pem
+aws ec2 create-key-pair --key-name $EKS_NODE_KEYPAIR --region $AWS_REGION --query 'KeyMaterial' --output text > /tmp/$EKS_NODE_KEYPAIR.pem
 
 
 # Create Worker Nodes
-printf " ${COLOR_GRAY}Create Worker Node Group... ${COLOR_OFF}\n"
+printf "[$(date +'%Y-%m-%dT%H:%M:%S%z')]: ${COLOR_GRAY}Create Worker Node Group... ${COLOR_OFF}\n"
 
-aws cloudformation create-stack \
+aws cloudformation create-stack --region $AWS_REGION \
     --stack-name ${CLUSTER_NAME}-nodegroup \
     --template-url https://amazon-eks.s3-us-west-2.amazonaws.com/1.10.3/2018-06-05/amazon-eks-nodegroup.yaml \
     --capabilities CAPABILITY_NAMED_IAM \
@@ -116,8 +139,12 @@ aws cloudformation create-stack \
     ParameterKey=ClusterControlPlaneSecurityGroup,ParameterValue=$EKS_CLUSTER_SG \
     ParameterKey=KeyName,ParameterValue=$EKS_NODE_KEYPAIR \
     ParameterKey=NodeImageId,ParameterValue=$EKS_NODE_AMIID
-aws cloudformation wait stack-create-complete --stack-name ${CLUSTER_NAME}-nodegroup
-EKS_NODE_ROLE=$(aws cloudformation describe-stacks --stack-name ${CLUSTER_NAME}-nodegroup --query 'Stacks[0].Outputs[?OutputKey==`NodeInstanceRole`].OutputValue' --output text)
+
+aws cloudformation wait stack-create-complete --stack-name ${CLUSTER_NAME}-nodegroup --region $AWS_REGION
+
+EKS_NODE_ROLE=$(aws cloudformation describe-stacks --stack-name ${CLUSTER_NAME}-nodegroup --region $AWS_REGION \
+                    --output text \
+                    --query 'Stacks[0].Outputs[?OutputKey==`NodeInstanceRole`].OutputValue')
 
 
 # Enable Worker Nodes
