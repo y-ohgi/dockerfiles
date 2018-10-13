@@ -11,6 +11,8 @@ $ docker build -t railscmd ../railscmd/Dockerfile
 $ docker run -it -v `pwd`:/app railscmd rails new . --database=postgresql
 ```
 
+### databaseの向き先の変更
+`config/database.yml`
 ```diff
 -  host: localhost
 +  host: <%= ENV['DATABASE_URL'] %>
