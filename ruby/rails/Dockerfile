@@ -19,6 +19,7 @@ RUN set -x\
     ca-certificates \
     mysql-client \
     mysql-dev \
+    less \
   && gem install bundler \
   && bundle install --jobs=4\
   && addgroup app \
