@@ -1,6 +1,7 @@
 FROM ruby:2.5.1-alpine
 
-ARG UID=501
+ARG UID=991
+ARG GID=991
 
 ENV LANG C.UTF-8
 
@@ -14,6 +15,7 @@ RUN set -x\
     libstdc++ \
     tzdata \
     nodejs \
+    nodejs-npm \
     build-base \
     linux-headers \
     ca-certificates \
@@ -22,7 +24,7 @@ RUN set -x\
     less \
   && gem install bundler \
   && bundle install --jobs=4\
-  && addgroup app \
+  && addgroup app -G ${GID}\
   && adduser -h /app -s /bin/sh -D -G app -u ${UID} app \
   && chown -R app:app /app
 

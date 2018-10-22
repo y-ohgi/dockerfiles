@@ -8,16 +8,21 @@ Ruby on Rails を使う時用のテンプレート
 ## Railsプロジェクトの作成
 ```
 $ docker build -t railscmd ../railscmd/Dockerfile
-$ docker run -it -v `pwd`:/app railscmd rails new . --database=postgresql
+$ docker run -it -v `pwd`:/app -w /app railscmd rails new myapp -d mysql
+```
+
+or
+
+```
+$ docker run -it -v `pwd`:/app -w /app railscmd rails new . -d mysql
 ```
 
 ### databaseの向き先の変更
 `config/database.yml`
 ```diff
 -  host: localhost
-+  host: <%= ENV['DATABASE_URL'] %>
++  host: <%= ENV['DATABASE_HOST'] %>
 ```
-
 
 ## 起動
 binding.pryを使用したいため、 `up` ではなく `run` で起動する
