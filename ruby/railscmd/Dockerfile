@@ -11,6 +11,7 @@ RUN set -x\
     libstdc++ \
     tzdata \
     nodejs \
+    nodejs-npm \
     build-base \
     linux-headers \
     ca-certificates \
