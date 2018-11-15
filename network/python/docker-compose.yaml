@@ -1,0 +1,19 @@
+version: "3.5"
+
+services:
+  python:
+    image: python:3-alpine
+    command: python -m http.server --cgi
+    working_dir: '/tmp'
+    volumes:
+      - './main.py:/tmp/cgi-bin/main.py'
+    ports:
+      - "8000:8000"
+    networks:
+      - network_app
+
+networks:
+  # default: #MEMO: defaultで設定すると、servicesのデフォルトで所属するネットワークを設定可能
+  network_app:
+    external:
+      name: network_app
