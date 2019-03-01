@@ -1,0 +1,12 @@
+version: '3.5'
+
+services:
+  app:
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./:/go/app
+    command: command: realize start --run --no-config
+    port:
+      - 1323:1323
