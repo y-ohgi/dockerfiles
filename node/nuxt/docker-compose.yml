@@ -1,0 +1,10 @@
+version: '3.5'
+
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/app
+    ports:
+      - 3000:3000
+    command: npm run dev
