@@ -52,6 +52,9 @@ eksctl create cluster \
 * kubectl
     - [kubernetes/pkg/kubectl at master · kubernetes/kubernetes](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl)
     - Kubernetesの操作を行う
+* ekscli
+    - [weaveworks/eksctl: a CLI for Amazon EKS](https://github.com/weaveworks/eksctl)
+    - EKSを簡単に操作するためのコマンド
 * jq
     - [stedolan/jq: Command-line JSON processor](https://github.com/stedolan/jq)
     - JSONの整形や操作を行う
