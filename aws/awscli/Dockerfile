@@ -10,8 +10,8 @@ RUN set -x \
   && yum install -y tar gzip awscli git jq which \
   && amazon-linux-extras install -y docker \
   && systemctl enable docker.service \
-  && sudo curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
-  && sudo chmod +x /usr/local/bin/docker-compose \
+  && curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose \
+  && chmod +x /usr/local/bin/docker-compose \
   && curl https://bootstrap.pypa.io/get-pip.py | python \
   && curl --silent --location "https://github.com/weaveworks/eksctl/releases/download/latest_release/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp \
   && mv /tmp/eksctl /usr/local/bin \
