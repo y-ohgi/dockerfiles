@@ -8,14 +8,35 @@ AWSの操作に必要そうなツール群
 
 # How To Use
 
+## 初めてAWSを触る場合
 ```
-$ aws configure
+$ docker run \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -it \
+  yohgi/awscli
+# aws configure
+```
+
+## 既にローカルにクレデンシャルが存在する場合
+```
 $ docker run \
   -v $HOME/.aws:/root/.aws \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -it \
-  aws
+  yohgi/awscli
 ```
+
+## カレントディレクトリをコンテナ内にマウントする場（よく使う）
+```
+$ docker run \
+  -v `pwd`:/share \
+  -w /share \
+  -v $HOME/.aws:/root/.aws \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -it \
+  yohgi/awscli
+```
+
 
 # Tools
 インストール済みのコマンド
