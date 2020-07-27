@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    volumes:
+      - ./:/app:delegated
+    ports:
+      - 3000:3000
+    command: sh -c 'npm install && npm run dev'
