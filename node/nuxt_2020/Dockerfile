@@ -8,7 +8,8 @@ COPY package.json package-lock.json /app/
 
 RUN set -x \
   && apk add --no-cache --virtual .gyp python make g++ \
-  && npm install
+  && npm install \
+  && apk del .gyp
 
 COPY . .
 
