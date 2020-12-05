@@ -1,0 +1,12 @@
+version: 3.7
+
+services:
+  zenn:
+    build: .
+    command: preview
+    working_dir: /opt/zenn
+    volumes:
+      - ./:/opt/zenn:delegated
+    ports:
+      - 8000:800
+
