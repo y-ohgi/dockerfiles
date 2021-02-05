@@ -17,10 +17,12 @@ RUN set -ex \
   && apt-get install -y nodejs \
   && npm install -g firebase-tools
 
+COPY firebase.json firebase.json
+
 # https://firebase.google.com/docs/emulator-suite/install_and_configure#port_configuration
 # Emulator Suite UI
 EXPOSE 4000
-# Authentication
+# Auth
 EXPOSE 8080
 # Firestore
 EXPOSE 9099
